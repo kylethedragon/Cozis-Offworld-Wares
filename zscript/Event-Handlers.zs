@@ -5,485 +5,196 @@
 // Musket
 class COW_MusketReplacer : EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = musket_blur_spawn_bias;
-		isPersistent = musket_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatemusket(worldevent e, int chance)
-	{
-		if(giverandom(chance))
+		switch (e.Replacement.GetClassName())
 		{
-			let sss = HD_MusketDropper(e.thing.Spawn("HD_MusketDropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let MuskAmmo = HDAmmo(e.Thing);
-	if (!MuskAmmo)
-	{
-		return;
-	}
-	switch (MuskAmmo.GetClassName())
-	{
-		case 'HDShellAmmo':
-			MuskAmmo.ItemsThatUseThis.Push("HD_Musket");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'BlurSphereReplacer':
-				trycreatemusket(e, spawnBiasActual);
+			case 'RedSphere':
+				if (random[MusketRandom](0, 128) <= 14)
+				{
+					e.Replacement = "HD_MusketDropper";
+					e.IsFinal = false;
+				}
 				break;
 		}
-	}
 	}
 }
 
 // Pipegun
-class PipeGunInjector : EventHandler
+class PipeGunInjector:EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = pipegun_shell_spawn_bias;
-		isPersistent = pipegun_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatepipegun(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let sss = HD_PipegunDropper(e.thing.Spawn("HD_PipegunDropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let PipeAmmo = HDAmmo(e.Thing);
-	if (!PipeAmmo)
-	{
-		return;
-	}
-	switch (PipeAmmo.GetClassName())
-	{
-		case 'HDShellAmmo':
-			PipeAmmo.ItemsThatUseThis.Push("HDPipegunSG");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
+		switch (e.Replacement.GetClassName())
 		{
 			case 'ShellBoxRandom':
-				trycreatepipegun(e, spawnBiasActual);
+				if (random[PipeRandom](0, 128) <= 24)
+				{
+					e.Replacement = "HD_PipegunDropper";
+					e.IsFinal = true;
+				}
 				break;
 		}
 	}
-	}
-}
 
-class LevergatInjector : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void WorldThingSpawned(WorldEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = levergat_chaingun_spawn_bias;
-		isPersistent = levergat_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		let PipeAmmo = HDAmmo(e.Thing);
+		if (!PipeAmmo)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatelevergat(worldevent e, int chance)
-	{
-		if(giverandom(chance))
+		switch (PipeAmmo.GetClassName())
 		{
-			let sss = HD_LevergatDropper(e.thing.Spawn("HD_LevergatDropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let LeverAmmo = HDAmmo(e.Thing);
-	if (!LeverAmmo)
-	{
-		return;
-	}
-	switch (LeverAmmo.GetClassName())
-	{
-		case 'HD50AEAmmo':
-			LeverAmmo.ItemsThatUseThis.Push("HDLeverGun");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'ChaingunReplaces':
-				trycreatelevergat(e, spawnBiasActual);
+			case 'HDShellAmmo':
+				PipeAmmo.ItemsThatUseThis.Push("HDPipeGunSG");
 				break;
 		}
-	}
 	}
 }
 
 // Striker/Stryker/Whatever the fuck we call it
-class SweepInjector : EventHandler
+class SweepInjector:EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActualsg;
-	private int spawnBiasActualssg;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActualsg = stryk_shotgun_spawn_bias;
-		spawnBiasActualSSG = stryk_ssg_spawn_bias;
-		isPersistent = stryk_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatestryk(worldevent e, int chance)
-	{
-		if(giverandom(chance))
+		switch (e.Replacement.GetClassName())
 		{
-			let sss = HD_StrikerDropper(e.thing.Spawn("HD_StrikerDropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let strykAmmo = HDAmmo(e.Thing);
-	if (!strykAmmo)
-	{
-		return;
-	}
-	switch (strykAmmo.GetClassName())
-	{
-		case 'HDShellAmmo':
-			strykAmmo.ItemsThatUseThis.Push("HDStreetSweeper");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'ChaingunReplaces':
-				trycreatestryk(e, spawnBiasActualsg);
-				break;
 			case 'SSGReplaces':
-				trycreatestryk(e, spawnBiasActualssg);
+				if (random[StrikerRandom]() <= 24)
+				{
+					e.Replacement = "HD_StrikerDropper";
+					e.IsFinal = true;
+				}
+				break;
+			case 'ShotgunReplaces':
+				if (random[StrikerRandom](0, 128) <= 14)
+				{
+					e.Replacement = "HD_StrikerDropper";
+					e.IsFinal = true;
+				}
 				break;
 		}
 	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		let SweepAmmo = HDAmmo(e.Thing);
+		if (!SweepAmmo)
+		{
+			return;
+		}
+
+		switch (SweepAmmo.GetClassName())
+		{
+			case 'HDShellAmmo':
+				SweepAmmo.ItemsThatUseThis.Push("HDStreetSweeper");
+				break;
+		}
 	}
 }
 
 // Commando .355 Carbine
-class Commando355Injector : EventHandler
+class Commando355Injector:EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActualCG;
-	private int spawnBiasActualssg;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActualCG = c355_chaingun_spawn_bias;
-		spawnBiasActualSSG = c355_ssg_spawn_bias;
-		isPersistent = c355_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatec355(worldevent e, int chance)
-	{
-		if(giverandom(chance))
+		switch (e.Replacement.GetClassName())
 		{
-			let sss = HD_CommandoDropper(e.thing.Spawn("HD_CommandoDropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let c355Ammo = HDAmmo(e.Thing);
-	if (!c355Ammo)
-	{
-		return;
-	}
-	switch (c355Ammo.GetClassName())
-	{
-		case 'HDRevolverAmmo':
-			c355Ammo.ItemsThatUseThis.Push("HDCommando");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'ChaingunReplaces':
-				trycreatec355(e, spawnBiasActualCG);
-				break;
 			case 'SSGReplaces':
-				trycreatec355(e, spawnBiasActualSSG);
+				if (random[CommandoRandom](0, 128) <= 14)
+				{
+					e.Replacement = "HD_CommandoDropper";
+					e.IsFinal = true;
+				}
+				break;
+			case 'ChaingunReplaces':
+				if (random[CommandoRandom]() <= 20)
+				{
+					e.Replacement = "HD_CommandoDropper";
+					e.IsFinal = true;
+				}
 				break;
 		}
 	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		let CommandoAmmo = HDAmmo(e.Thing);
+		if (!CommandoAmmo)
+		{
+			return;
+		}
+
+		switch (CommandoAmmo.GetClassName())
+		{
+			case 'HDRevolverAmmo':
+				CommandoAmmo.ItemsThatUseThis.Push("HDCommando");
+				break;
+		}
 	}
 }
 
-// RAC-13/45 (it's a mac-10 but RAC-13 is kewler)
-class MacInjector : EventHandler
+// MAC-10
+class MacInjector:EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = mac10_regulars_spawn_bias;
-		isPersistent = mac10_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatemac10(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let sss = HD_MAC11Dropper(e.thing.Spawn("HD_MAC11Dropper", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	let MacAmmo = HDAmmo(e.Thing);
-	if (!MacAmmo)
-	{
-		return;
-	}
-	switch (MacAmmo.GetClassName())
-	{
-		case 'HD45ACPAmmo':
-			MacAmmo.ItemsThatUseThis.Push("HDMAC11");
-			break;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
+		switch (e.Replacement.GetClassName())
 		{
 			case 'ChaingunReplaces':
-				trycreatemac10(e, spawnBiasActual);
+				if (random[MacRandom](0, 128) <= 24)
+				{
+					e.Replacement = "HD_MAC11Dropper";
+					e.IsFinal = true;
+				}
 				break;
 		}
 	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		let MacAmmo = HDAmmo(e.Thing);
+		if (!MacAmmo)
+		{
+			return;
+		}
+
+		switch (MacAmmo.GetClassName())
+		{
+			case 'HD45ACPAmmo':
+				MacAmmo.ItemsThatUseThis.Push("HDMAC11");
+				break;
+		}
 	}
 }
+
 //-------------------------------------------------
 // MONSTERS
 //-------------------------------------------------
@@ -497,8 +208,8 @@ class TriteHandler : EventHandler
 
         void init()
     {
-        	current_trites = current_tritescvar;
-			max_trites = max_tritescvar;
+        		current_trites            = current_tritescvar;
+				max_trites            = max_tritescvar;
     }
 
 	override void WorldLoaded(WorldEvent e)
@@ -521,93 +232,22 @@ class TriteHandler : EventHandler
 // Trite Barrels
 class SpiderBarrelEventHandler : EventHandler
 {
-
-
-	private bool cvarsAvailable;
-
-	private int spawnBiasActual;
-	private bool isPersistent;
-	
-	// Shoves cvar values into their non-cvar shaped holes.
-	// I have no idea why names for cvars become reserved here.
-	// But, this works. So no complaints. 
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual            = sbrl_regulars_spawn_bias;
-		isPersistent               = sbrl_persistent_spawning;
-	}
-
-	// 'Initalizes' the event handler,
-	// In my testing, this is called after events are fired. 
-	override void WorldLoaded(WorldEvent e)
-	{
-		// always calls init.
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		
-		// temp storage for the random value. 
-		int iii = random(0, chance);
-		
-		// force negative values to be 0. 
-		if(iii < 0)
-			iii = 0;
-			
-		
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreatebarrel(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let sss = SpiderBarrel(e.thing.Spawn("SpiderBarrel", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-			
-
-
-		}
-	}
-
-
-override void worldthingspawned(worldevent e)
-  {
-	// Makes sure the values are always loaded before
-	// taking in events.
-	if(!cvarsAvailable)
-		init();
-		
- 	// in case it's not real. 
-	if(!e.Thing)
-	{
-		return;
-	}
-	
-	// Don't spawn anything if the level has been loaded more than a tic. 
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
+		switch (e.Replacement.GetClassName())
 		{
 			case 'HDBarrel':
-				trycreatebarrel(e, spawnBiasActual);
+				if (random[spiderrandom]() <= 25)
+				{
+					e.Replacement = "SpiderBarrel";
+				}
 				break;
 		}
-	}
 	}
 }
 
@@ -618,488 +258,222 @@ override void worldthingspawned(worldevent e)
 // Rum
 class OleRumEventHandler : EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = rum_pmi_spawn_bias;
-		isPersistent = rum_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreaterum(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let sss = UaS_Alcohol_OleRum(e.thing.Spawn("UaS_Alcohol_OleRum", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
+		switch (e.Replacement.GetClassName())
 		{
 			case 'PortableHealingItem':
-				trycreaterum(e, spawnBiasActual);
+				if (random[rumrandom](0, 128) <= 10)
+				{
+					e.Replacement = "UaS_Alcohol_OleRum";
+				}
 				break;
 		}
-	}
-	}
-}
-
-// Radsuit Packages
-class RadReplacementHandler : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
-	{
-		cvarsAvailable = true;
-		spawnBiasActual = suit_replacement_spawn_bias;
-		isPersistent = rum_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
-		{
-			if(chance > -1)
-				result = true;
-		}
-		
-		return result;
-	}
-
-	void trycreatesuit(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let sss = HD_RadsuitPack(e.thing.Spawn("HD_RadsuitPack", e.thing.pos, SXF_TRANSFERSPECIAL | SXF_NOCHECKPOSITION));
-			if(sss)
-			{
-				
-				e.thing.destroy();
-			}
-
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'PortableRadsuit':
-				trycreatesuit(e, spawnBiasActual);
-				break;
-		}
-	}
 	}
 }
 
 // Armor Patch Kit
-class APKHandler : EventHandler
+class APKHandler : EventHandler {
+	int alreadyspawned;
+	int failspawn;
+
+	override void WorldThingSpawned(WorldEvent e) {
+		if(level.maptime > 1) { return; }
+		if(!e.Thing) { return; }
+		if(e.Thing is "Inventory" && Inventory(e.Thing).Owner) { return; }
+
+		bool spawnable = (
+			e.Thing.GetClassName() == "Lumberjack" ||
+            e.Thing.GetClassName() == "HDArmour" ||
+			e.Thing.GetClassName() == "DeadRifleman" ||
+			e.Thing.GetClassName() == "ReallyDeadRifleman");
+
+		int chance = 5 + (5 * failspawn) - (50 * alreadyspawned);
+		chance = clamp(chance, 0, 100);
+
+		if(spawnable) {
+			if (random(0, 100) <= chance) {
+				//console.printf("armor patch kit spawn chance %i, success", chance);
+				let SpawnedAPK = Actor.Spawn('HDAPKSpawner', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
+				SpawnedAPK.vel.x += frandom(-2,2);
+				SpawnedAPK.vel.y += frandom[spawnstuff](-2,2);
+				SpawnedAPK.vel.z += frandom[spawnstuff](1,2);
+				alreadyspawned++;
+			}
+			else {
+				//console.printf("armor patch kit spawn chance %i, fail", chance);
+				failspawn++;
+			}
+		}
+	}
+}
+
+class RadReplacementHandler : EventHandler
 {
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
+	override void CheckReplacement(ReplaceEvent e)
 	{
-		cvarsAvailable = true;
-		spawnBiasActual = apk_replacement_spawn_bias;
-		isPersistent = apk_persistent_spawning;
-	}
-
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
-
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
+		if (!e.Replacement)
 		{
-			if(chance > -1)
-				result = true;
+			return;
 		}
-		
-		return result;
-	}
 
-	void trycreateapk(worldevent e, int chance)
-	{
-		if(giverandom(chance))
+		switch (e.Replacement.GetClassName())
 		{
-			let SpawnedAPK = Actor.Spawn('HDAPKSpawner', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
-			SpawnedAPK.vel.x += frandom(-2,2);
-			SpawnedAPK.vel.y += frandom[spawnstuff](-2,2);
-			SpawnedAPK.vel.z += frandom[spawnstuff](1,2);
-		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'Lumberjack':
-				trycreateapk(e, spawnBiasActual);
-				break;
-			case 'HDArmour':
-				trycreateapk(e, spawnBiasActual);
-				break;
-			case 'DeadRifleman':
-				trycreateapk(e, spawnBiasActual);
-				break;
-			case 'ReallyDeadRifleman':
-				trycreateapk(e, spawnBiasActual);
+			case 'PortableRadsuit':
+				if (random[RadRandom](0, 1) == 1)
+				{
+					e.Replacement = "HD_RadsuitPack";
+				}
 				break;
 		}
-	}
 	}
 }
 
 // Universal Reloader
-class URLHandler : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
-	{
-		cvarsAvailable = true;
-		spawnBiasActual = url_replacement_spawn_bias;
-		isPersistent = url_persistent_spawning;
-	}
+class URLHandler : EventHandler {
+	int alreadyspawned;
+	int failspawn;
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
+	override void WorldThingSpawned(WorldEvent e) {
+		if(level.time > 1) { return; }
+		if(!e.Thing) { return; }
+		if(e.Thing is "Inventory" && Inventory(e.Thing).Owner) { return; }
 
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
-		{
-			if(chance > -1)
-				result = true;
-		}
-		
-		return result;
-	}
+		bool spawnable = (
+			e.Thing.GetClassName() == "HDAmBox" ||
+			e.Thing.GetClassName() == "HDAmBoxUnarmed" ||
+			e.Thing.GetClassName() == "DeadRifleman" ||
+			e.Thing.GetClassName() == "ReallyDeadRifleman");
 
-	void trycreateurl(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let SpawnedURL = Actor.Spawn('HDURLSpawner', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
-			SpawnedURL.vel.x += frandom(-2,2);
-			SpawnedURL.vel.y += frandom[spawnstuff](-2,2);
-			SpawnedURL.vel.z += frandom[spawnstuff](1,2);
+		int chance = 5 + (5 * failspawn) - (50 * alreadyspawned);
+		chance = clamp(chance, 0, 100);
+
+		if(spawnable) {
+			if (random(0, 100) <= chance) {
+				//console.printf("URL spawn chance %i, success", chance);
+				let SpawnedURL = Actor.Spawn('HDURLSpawner', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
+				SpawnedURL.vel.x += frandom(-2,2);
+				SpawnedURL.vel.y += frandom[spawnstuff](-2,2);
+				SpawnedURL.vel.z += frandom[spawnstuff](1,2);
+				alreadyspawned++;
+			}
+			else {
+				//console.printf("URL spawn chance %i, fail", chance);
+				failspawn++;
+			}
 		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'HDAmBox':
-				trycreateurl(e, spawnBiasActual);
-				break;
-			case 'DeadRifleman':
-				trycreateurl(e, spawnBiasActual);
-				break;
-			case 'ReallyDeadRifleman':
-				trycreateurl(e, spawnBiasActual);
-				break;
-		}
-	}
 	}
 }
 
 // Logistic Bags
-class HD_LogiBagSpawner : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
-	{
-		cvarsAvailable = true;
-		spawnBiasActual = lgb_replacement_spawn_bias;
-		isPersistent = lgb_persistent_spawning;
-	}
+class HD_LogiBagSpawner : EventHandler {
+	int alreadyspawned;
+	int failspawn;
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
+	override void WorldThingSpawned(WorldEvent e) {
+		if(level.maptime > 1) { return; }
+		if(!e.Thing) { return; }
+		if(e.Thing is "Inventory" && Inventory(e.Thing).Owner) { return; }
 
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
-		{
-			if(chance > -1)
-				result = true;
-		}
-		
-		return result;
-	}
+		bool spawnable = (
+			e.Thing.GetClassName() == "HDAmBox" ||
+			e.Thing.GetClassName() == "DeadRifleman" ||
+			e.Thing.GetClassName() == "ReallyDeadRifleman");
 
-	void trycreatelgb(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let SpawnedLBag = Actor.Spawn('HD_WildLogiBag', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
-			SpawnedLBag.vel.x += frandom(-2,2);
-			SpawnedLBag.vel.y += frandom[spawnstuff](-2,2);
-			SpawnedLBag.vel.z += frandom[spawnstuff](1,2);
+		int chance = 5 + (5 * failspawn) - (50 * alreadyspawned);
+		chance = clamp(chance, 0, 100);
+
+		if(spawnable) {
+			if (random(0, 100) <= chance) {
+				//console.printf("logi bag spawn chance %i, success", chance);
+				let SpawnedPouch = Actor.Spawn('HD_WildLogiBag', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
+				SpawnedPouch.vel.x += frandom(-2,2);
+				SpawnedPouch.vel.y += frandom[spawnstuff](-2,2);
+				SpawnedPouch.vel.z += frandom[spawnstuff](1,2);
+				alreadyspawned++;
+				if (e.Thing.GetClassName() == "HDAmBox") { e.Thing.destroy(); }
+			}
+			else {
+				//console.printf("logi bag spawn chance %i, fail", chance);
+				failspawn++;
+			}
 		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'HDAmBox':
-				trycreatelgb(e, spawnBiasActual);
-				break;
-			case 'DeadRifleman':
-				trycreatelgb(e, spawnBiasActual);
-				break;
-			case 'ReallyDeadRifleman':
-				trycreatelgb(e, spawnBiasActual);
-				break;
-		}
-	}
 	}
 }
 
 // Medical Bags
-class HD_MediBagSpawner : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
-	{
-		cvarsAvailable = true;
-		spawnBiasActual = mdb_replacement_spawn_bias;
-		isPersistent = lgb_persistent_spawning;
-	}
+class HD_MediBagSpawner : EventHandler {
+	int alreadyspawned;
+	int failspawn;
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
+	override void WorldThingSpawned(WorldEvent e) {
+		if(level.maptime > 1) { return; }
+		if(!e.Thing) { return; }
+		if(e.Thing is "Inventory" && Inventory(e.Thing).Owner) { return; }
 
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
-		{
-			if(chance > -1)
-				result = true;
-		}
-		
-		return result;
-	}
+		bool spawnable = (
+			e.Thing.GetClassName() == "PortableHealingItem" ||
+			e.Thing.GetClassName() == "DeadRifleman" ||
+			e.Thing.GetClassName() == "ReallyDeadRifleman");
 
-	void trycreatemdb(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let SpawnedMDB = Actor.Spawn('HD_WildMediBag', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
-			SpawnedMDB.vel.x += frandom(-2,2);
-			SpawnedMDB.vel.y += frandom[spawnstuff](-2,2);
-			SpawnedMDB.vel.z += frandom[spawnstuff](1,2);
-			if (e.Thing.GetClassName() == "PortableHealingItem") { e.Thing.destroy(); }
+		int chance = 5 + (5 * failspawn) - (50 * alreadyspawned);
+		chance = clamp(chance, 0, 100);
+
+		if(spawnable) {
+			if (random(0, 100) <= chance) {
+				//console.printf("logi bag spawn chance %i, success", chance);
+				let SpawnedPouch = Actor.Spawn('HD_WildMediBag', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
+				SpawnedPouch.vel.x += frandom(-2,2);
+				SpawnedPouch.vel.y += frandom[spawnstuff](-2,2);
+				SpawnedPouch.vel.z += frandom[spawnstuff](1,2);
+				alreadyspawned++;
+				if (e.Thing.GetClassName() == "PortableHealingItem") { e.Thing.destroy(); }
+			}
+			else {
+				//console.printf("logi bag spawn chance %i, fail", chance);
+				failspawn++;
+			}
 		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'PortableHealingItem':
-				trycreatemdb(e, spawnBiasActual);
-				break;
-			case 'DeadRifleman':
-				trycreatemdb(e, spawnBiasActual);
-				break;
-			case 'ReallyDeadRifleman':
-				trycreatemdb(e, spawnBiasActual);
-				break;
-		}
-	}
 	}
 }
 
 // Defib
-class HD_DefibSpawner : EventHandler
-{
-	private bool cvarsAvailable;
-	private int spawnBiasActual;
-	private bool isPersistent;
-	void init()
-	{
-		cvarsAvailable = true;
-		spawnBiasActual = dfb_replacement_spawn_bias;
-		isPersistent = dfb_persistent_spawning;
-	}
+class HD_DefibSpawner : EventHandler {
+	int alreadyspawned;
+	int failspawn;
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		init();
-		super.WorldLoaded(e);
-	}
+	override void WorldThingSpawned(WorldEvent e) {
+		if(level.maptime > 1) { return; }
+		if(!e.Thing) { return; }
+		if(e.Thing is "Inventory" && Inventory(e.Thing).Owner) { return; }
 
-	bool giverandom(int chance)
-	{
-		bool result = false;
-		int iii = random(0, chance);
-		if(iii < 0)
-			iii = 0;
-		if (iii == 0)
-		{
-			if(chance > -1)
-				result = true;
-		}
-		
-		return result;
-	}
+		bool spawnable = (
+			e.Thing.GetClassName() == "PortableHealingItem" ||
+			e.Thing.GetClassName() == "DeadRifleman" ||
+			e.Thing.GetClassName() == "ReallyDeadRifleman");
 
-	void trycreatedfb(worldevent e, int chance)
-	{
-		if(giverandom(chance))
-		{
-			let SpawnedPouch = Actor.Spawn('HDefib', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
-			SpawnedPouch.vel.x += frandom(-2,2);
-			SpawnedPouch.vel.y += frandom[spawnstuff](-2,2);
-			SpawnedPouch.vel.z += frandom[spawnstuff](1,2);
-			if (e.Thing.GetClassName() == "PortableHealingItem") { e.Thing.destroy(); }
+		int chance = 5 + (5 * failspawn) - (50 * alreadyspawned);
+		chance = clamp(chance, 0, 100);
+
+		if(spawnable) {
+			if (random(0, 100) <= chance) {
+				//console.printf("defib spawn chance %i, success", chance);
+				let SpawnedPouch = Actor.Spawn('HDefib', (e.Thing.pos.x, e.Thing.pos.y, e.Thing.pos.z + 5));
+				SpawnedPouch.vel.x += frandom(-2,2);
+				SpawnedPouch.vel.y += frandom[spawnstuff](-2,2);
+				SpawnedPouch.vel.z += frandom[spawnstuff](1,2);
+				alreadyspawned++;
+				if (e.Thing.GetClassName() == "PortableHealingItem") { e.Thing.destroy(); }
+			}
+			else {
+				//console.printf("defib spawn chance %i, fail", chance);
+				failspawn++;
+			}
 		}
-	}
-override void worldthingspawned(worldevent e)
-  {
-	if(!cvarsAvailable)
-		init();
-	if(!e.Thing)
-	{
-		return;
-	}
-	if (!(level.maptime > 1) || isPersistent)
-	{
-		switch(e.Thing.GetClassName())
-		{
-			case 'PortableHealingItem':
-				trycreatedfb(e, spawnBiasActual);
-				break;
-			case 'DeadRifleman':
-				trycreatedfb(e, spawnBiasActual);
-				break;
-			case 'ReallyDeadRifleman':
-				trycreatedfb(e, spawnBiasActual);
-				break;
-		}
-	}
 	}
 }
